@@ -1,8 +1,4 @@
-'''
-# Time   : 2021/10/25 14:40
-# Author : adamwei
-# File   : utils.py
-'''
+"""Author name not mentioned for anonymization"""
 import pandas as pd
 import numpy as np
 import random
