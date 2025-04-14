@@ -155,7 +155,7 @@ def execute_label_inference_attack(
             total += batch_y.size(0)
         print(f"[Epoch {epoch+1}] Loss: {total_loss/total:.4f}, Acc: {correct/total:.4f}")
 
-    print(f"💾 Saving trained model to {save_model_path}")
+    print(f" Saving trained model to {save_model_path}")
     torch.save(label_inference_model.state_dict(), save_model_path)
 
     # Evaluation
