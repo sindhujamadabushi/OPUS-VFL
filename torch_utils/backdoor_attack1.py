@@ -82,14 +82,14 @@ def label_inference(bottom_model, auxiliary_data, auxiliary_labels, ground_truth
 
 def compute_saliency_map(model, input_data, target_label):
     
-    model.train()  # ✅ Ensure model is in training mode for gradient tracking
+    model.train()  
 
-    input_data = input_data.to(device).float()  # ✅ Move input to the correct device
-    input_data.requires_grad = True  # ✅ Ensure input tracks gradients
+    input_data = input_data.to(device).float()  
+    input_data.requires_grad = True 
 
-    target_label = target_label.to(device).long()  # ✅ Ensure target is on the same device
+    target_label = target_label.to(device).long() 
 
-    # ✅ Ensure input is 4D: [1, C, H, W]
+    
     if input_data.dim() == 3:  
         input_data = input_data.unsqueeze(0)
 
@@ -104,54 +104,21 @@ def compute_saliency_map(model, input_data, target_label):
     if not loss.requires_grad:
         raise RuntimeError("Loss is not tracking gradients. Ensure input has requires_grad=True.")
 
-    model.zero_grad()  # ✅ Clear previous gradients
-    loss.backward()  # ✅ Compute gradients
+    model.zero_grad() 
+    loss.backward()  
 
     if input_data.grad is None:
         raise RuntimeError("Gradient not computed! Check requires_grad and input tracking.")
 
     saliency_map = input_data.grad.abs()  # Get saliency map
 
-    if saliency_map.dim() == 4:  # ✅ Ensure output is [H, W]
+    if saliency_map.dim() == 4:  
         saliency_map = saliency_map.mean(dim=(0, 1))
     elif saliency_map.dim() == 3:  
         saliency_map = saliency_map.mean(dim=0)
 
     # print(f"Final saliency_map shape: {saliency_map.shape}")  # Debugging
     return saliency_map
-# def compute_saliency_map(model, input_data, target_label):
-#     model.eval()  # Set model to evaluation mode
-
-#     input_data = input_data.to(device).float()  # Move input to device
-#     input_data.requires_grad = True  # Enable gradients
-
-#     target_label = target_label.to(device)  # Move target to device
-
-#     # ✅ Ensure `input_data` is 4D: [1, C, H, W]
-#     if input_data.dim() == 3:  # If input is [C, H, W], add batch dim
-#         input_data = input_data.unsqueeze(0)
-#     elif input_data.dim() == 5:  # If input is mistakenly [1, 1, C, H, W]
-#         input_data = input_data.squeeze(1)  # Remove extra dimension
-
-#     print(f"Final input_data shape: {input_data.shape}")  # Debug
-
-#     output = model(input_data)  # Forward pass
-#     loss = torch.nn.functional.cross_entropy(output, target_label.unsqueeze(0))  # Loss
-#     model.zero_grad()  # Clear previous gradients
-#     loss.backward()  # Backward pass for gradients
-
-#     saliency_map = input_data.grad.abs()  # Saliency as abs(gradients)
-
-#     # ✅ Fix: Ensure `saliency_map` is exactly `[H, W]`
-#     if saliency_map.dim() == 4:  # Expected shape: [1, C, H, W]
-#         saliency_map = saliency_map.mean(dim=(0, 1))  # Reduce batch and channel dims
-#     elif saliency_map.dim() == 3:  # Unexpected case: [C, H, W]
-#         saliency_map = saliency_map.mean(dim=0)  # Reduce only channel dim
-
-#     print(f"Final saliency_map shape: {saliency_map.shape}")  # Should print `[H, W]`
-#     return saliency_map
-
-
 
 def find_highest_saliency_region(saliency_map, window_size=5):
     num_features = saliency_map.shape[0]
@@ -194,12 +161,11 @@ def insert_saliency_trigger(data, labels, source_class, target_class, model, poi
     poisoned_indices = source_indices[torch.randperm(len(source_indices))[:num_poisoned]]
 
     for idx in poisoned_indices:
-        # ✅ Ensure input tensor is a leaf node with requires_grad before passing through model
         sample = data[idx].unsqueeze(0).clone().to(device).requires_grad_(True)
 
-        model.train()  # ✅ Ensure model is in train mode for gradient tracking
-        sample_output = model(sample)  # Do NOT squeeze(0), retain batch dim
-        sample_output.requires_grad_(True)  # ✅ Retain gradients for backprop
+        model.train()  
+        sample_output = model(sample)  
+        sample_output.requires_grad_(True)  
 
         target_label = torch.tensor(target_class, device=device)
 
@@ -229,113 +195,7 @@ def insert_saliency_trigger(data, labels, source_class, target_class, model, poi
 
     return poisoned_data, poisoned_labels
 
-# def insert_saliency_trigger(data, labels, source_class, target_class, model, poisoning_budget=0.1, trigger_value=0.01, window_size=5):
-#     data = data.to(device)
-#     labels = labels.to(device)
 
-#     poisoned_data = data.clone()
-#     poisoned_labels = labels.clone()
-
-#     source_indices = (labels == source_class).nonzero(as_tuple=True)[0]
-#     num_poisoned = int(len(source_indices) * poisoning_budget)
-#     poisoned_indices = source_indices[torch.randperm(len(source_indices))[:num_poisoned]]
-
-#     for idx in poisoned_indices:
-#         #  Ensure input tensor is a leaf node with requires_grad before passing through model
-#         sample = data[idx].unsqueeze(0).clone().to(device).requires_grad_(True)  
-#         sample_output = model(sample).squeeze(0)  # Keep computation graph intact
-
-#         target_label = torch.tensor(target_class, device=device)
-
-#         # Debug check
-#         print(f"Sample requires_grad: {sample.requires_grad}, grad_fn: {sample.grad_fn}")
-#         print(f"Sample_output requires_grad: {sample_output.requires_grad}, grad_fn: {sample_output.grad_fn}")
-
-#         saliency_map = compute_saliency_map(model, sample, target_label)
-#         # spatial_saliency = saliency_map.mean(dim=0)  # shape [H, W]
-#         if saliency_map.dim() == 2:  # Expected [H, W]
-#             spatial_saliency = saliency_map
-#         elif saliency_map.dim() == 3:  # Unexpected [C, H, W], reduce over C
-#             spatial_saliency = saliency_map.mean(dim=0)
-#         else:
-#             raise ValueError(f"Unexpected saliency_map shape: {saliency_map.shape}")
-        
-#         best_i, best_j = find_highest_saliency_region_2d(spatial_saliency, window_size)
-        
-#         # Insert trigger patch
-#         H, W = spatial_saliency.shape
-#         for c in range(sample.shape[1]):  # Assuming (C, H, W)
-#             for di in range(window_size):
-#                 for dj in range(window_size):
-#                     if best_i + di < H and best_j + dj < W:
-#                         poisoned_data[idx, c, best_i+di, best_j+dj] += trigger_value
-#         poisoned_labels[idx] = target_class
-
-#     return poisoned_data, poisoned_labels
-
-
-# def compute_saliency_map(model, input_data, target_label):
-#     model.eval()  # Set model to evaluation mode
-
-#     input_data = input_data.to(device).float()  # Move input to device
-#     input_data.requires_grad = True  # Enable gradients
-
-#     target_label = target_label.to(device)  # Move target to device
-#     if input_data.dim() == 3:  # If input is [C, H, W]
-#         input_data = input_data.unsqueeze(0)  # Convert to [1, C, H, W] for batch
-#     elif input_data.dim() == 5:  # If input is mistakenly 5D
-#         input_data = input_data.squeeze(1)  # Remove the extra dimension
-
-#     output = model(input_data)  # Forward pass
-#     loss = torch.nn.functional.cross_entropy(output, target_label.unsqueeze(0))  # Loss
-#     model.zero_grad()  # Clear previous gradients
-#     loss.backward()  # Backward pass for gradients
-
-#     saliency_map = input_data.grad.abs()  # Saliency as abs(gradients)
-#     return saliency_map
-
-# def insert_saliency_trigger(data, labels, source_class, target_class, model, poisoning_budget=0.1, trigger_value=0.01, window_size=5):
-#     data = data.to(device)
-#     labels = labels.to(device)
-
-#     poisoned_data = data.clone()
-#     poisoned_labels = labels.clone()
-
-#     # Find indices of samples to poison
-#     source_indices = (labels == source_class).nonzero(as_tuple=True)[0]
-#     num_poisoned = int(len(source_indices) * poisoning_budget)
-#     poisoned_indices = source_indices[torch.randperm(len(source_indices))[:num_poisoned]]
-
-#     for idx in poisoned_indices:
-#         # Compute saliency map for the sample
-#         # sample = data[idx].clone().detach().requires_grad_(True)
-#         sample = model(data[idx].unsqueeze(0)).squeeze(0)  # Pass it through the model
-#         sample.requires_grad_(True)  # Now it's part of computation graph
-        
-        
-#         target_label = labels[idx].clone()
-#         target_label = target_label.to(device)
-#         print(f"Sample requires_grad: {sample.requires_grad}, grad_fn: {sample.grad_fn}")
-
-#         # print(f"Sample requires_grad: {sample.requires_grad}, grad_fn: {sample.grad_fn}")
-#         # print(f"Target label: {target_label}, type: {type(target_label)}, device: {target_label.device}")
-#         saliency_map = compute_saliency_map(model, sample, target_label)  # shape [3, H, W]
-#         # Average over channels to get a spatial saliency map
-#         spatial_saliency = saliency_map.mean(dim=0)  # shape [H, W]
-#         best_i, best_j = find_highest_saliency_region_2d(spatial_saliency, window_size)
-#         # Insert trigger patch in all channels
-#         # Ensure we don't go out of bounds
-#         H, W = spatial_saliency.shape
-#         for c in range(sample.shape[0]):
-#             for di in range(window_size):
-#                 for dj in range(window_size):
-#                     if best_i + di < H and best_j + dj < W:
-#                         # You can choose to replace or add; here we add
-#                         poisoned_data[idx, c, best_i+di, best_j+dj] += trigger_value
-#         poisoned_labels[idx] = target_class
-#     return poisoned_data, poisoned_labels
-
-#  Compute Attack Success Rate (ASR)
 def compute_asr(top_model, X_test_vertical_FL, y_test, source_class, target_class, organization_models, organization_num):
     """ Computes the Attack Success Rate (ASR) """
     
@@ -389,10 +249,6 @@ def flip_labels(y_train, flip_ratio=0.3, num_classes=10):
 
     return y_train
 
-# Example usage:
-y_train = torch.randint(0, 10, (100,))  # Simulating a dataset with 100 labels (0-9)
-flipped_y_train = flip_labels(y_train, flip_ratio=0.35, num_classes=10)
-
 # Check how many were flipped
-num_flipped = (y_train != flipped_y_train).sum().item()
-print(f"Total samples: {len(y_train)}, Flipped samples: {num_flipped}")
+# num_flipped = (y_train != flipped_y_train).sum().item()
+# print(f"Total samples: {len(y_train)}, Flipped samples: {num_flipped}")
