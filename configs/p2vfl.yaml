@@ -1,0 +1,41 @@
+experiment:
+  baseline: p2vfl  # Options: vanilla_vfl, p2vfl, fraim, bpf, vfl_czofo, fedsdg_fspp
+  dataset: CIFAR10  # Options: MNIST, F-MNIST, Credit Card
+  num_clients: [5]
+  num_epochs: 60
+  batch_size: 32
+  iterations: 10
+  learning_rates:   
+    top_model: 0.0000116279  #0.0000225
+    organization_model: 0.00000581395   #0.0000875
+incentive:
+  num_warmup_epochs: 20
+  step_size_for_epsilon_feedback: 0.001  #50
+  delta: 0.000001
+  sensitivity: 0.1
+  alpha: 1   #contr term
+  beta: 1 #priv term
+  total_tokens: [100,120]
+  client_costs_ratio: [1, 0.7, 0.9]
+  client_actual_resources: [20, 40 ]
+
+attack: 
+  type: no_attack  # Options: backdoor, label_inference, feature_inference, no_attack
+ 
+ # backdoor attack parameters
+  source_class: 3
+  target_class: 8
+  malicious_client_idx: 2
+  trigger_value: 0.02
+  poison_weight: 0.3
+  window_size: 5
+
+  # feature inference attack parameters
+  selected_keys: [0,3,4]
+  target_client_idx: 5
+  num_adversary_features: [50, 100, 150, 200, 250]
+
+  # label inference attack parameters
+  label_inference_malicious_client_idx: 2
+  r_min: 0.05
+  r_max: 0.5

@@ -1,0 +1,33 @@
+experiment:
+  baseline: vanilla_vfl # Options: vanilla_vfl, p2vfl, fraim, bpf, vfl_czofo, fedsdg_fspp
+  dataset: CRITEO  # Options: MNIST, F-MNIST, Credit Card
+  num_clients: 5
+  num_epochs: 100
+  batch_size: 500
+  iterations: 1
+  learning_rates:   
+    top_model: 0.000015  #0.0000225
+    organization_model: 0.0000855   #0.0000875
+  epsilon: 0.9
+  delta: 0.00001
+  sensitivity: 0.1
+attack: 
+  type: backdoor  # Options: backdoor, label_inference, feature_inference
+  # backdoor attack parameters
+  source_class: 3
+  target_class: 8
+  malicious_client_idx: 2
+  trigger_value: 0.02
+  poison_weight: 0.3
+  window_size: 5
+
+  # feature inference attack parameters
+  selected_keys: [0,3,4]
+  target_client_idx: 2
+  num_adversary_features: 10    #10, 40, 60
+
+  # label inference attack parameters
+  label_inference_malicious_client_idx: 2
+  r_min: 0.1
+  r_max: 1
+  
