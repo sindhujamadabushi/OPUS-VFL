@@ -65,5 +65,31 @@ Below are the default values used for each setting:
 > If you're running baselines like `vanilla`, `vfl_czofo`, `bpf`, or `sdg`, please check their corresponding `run_*.py` files in the same folder.  
 > Each baseline defines its own learning rates, batch size, and other settings **at the top of the script** — it's easy to find and modify.
 
+### Computing Infrastructure
+
+We used computing clusters for all experiments. The specific hardware varied by dataset:
+
+#### MNIST (CPU-only)
+- **Processor**: AMD EPYC 7702 (128 cores/node)
+- **Memory**: 256 GB RAM
+- **GPU**: Not used
+- **Usage**: MNIST experiments were run entirely on CPU nodes.
+
+#### CIFAR-10 & CIFAR-100 (GPU-enabled)
+- **GPU**: NVIDIA A30 (24 GB)
+- **CPU**: Intel Xeon Platinum 8462Y+ (64 cores/node)
+- **Memory**: 512 GB RAM
+- **Usage**: All CIFAR-10 and CIFAR-100 experiments were run on GPU nodes with A30 GPUs.
+
+#### Software Environment (All Experiments)
+- **Operating System**: Red Hat Enterprise Linux
+- **Python**: 3.9+
+- **PyTorch**: 1.13+
+- **CUDA**: 11.6 (for GPU runs)
+- **Other Libraries**: NumPy, scikit-learn, Optuna, tqdm  
+  *(Full list available in `requirements.txt`)*
+
+All experiments were run using isolated environments configured via ARC’s module system.
+
 
 
