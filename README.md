@@ -61,6 +61,22 @@ Below are the default values used for each setting:
 > If you're running baselines like `vanilla`, `vfl_czofo`, `bpf`, or `sdg`, please check their corresponding `run_*.py` files in the same folder.  
 > Each baseline defines its own learning rates, batch size, and other settings **at the top of the script**.
 
+### Randomness and Reproducibility
+
+We used fixed random seeds **during initial tuning and development** to ensure reproducibility while selecting stable hyperparameters.  
+Specifically, we set seeds for:
+
+- Python `random`
+- NumPy
+
+```python
+seed = 42
+random.seed(seed)
+np.random.seed(seed)
+torch.manual_seed(seed)
+```
+Once stable settings were identified, we disabled the seed and ran each experiment 10 times to capture variability and report averaged results across runs.
+
 ### Computing Infrastructure
 
 We used computing clusters for all experiments. The specific hardware varied by dataset:
