@@ -40,7 +40,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 # np.random.seed(42)
 # random.seed(42)
 
-with open('/home/msindhuja/PERFACY/configs/p2vfl.yaml', 'r') as file:
+with open('/configs/p2vfl.yaml', 'r') as file:
     config = yaml.safe_load(file)
  
 
