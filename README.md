@@ -32,6 +32,13 @@ Use the appropriate `run_*.py` file based on the setting you want to test:
 
 Each script runs end-to-end, including data loading, model training, attack (if applicable), and logging results.
 
+### Other Baselines
+
+We follow the same naming and usage convention for other baselines (e.g., `vanilla`, `vfl_czofo`, `bpf`, `sdg`, etc.).  
+Just run the appropriate `run_<baseline>_<attack>_<dataset>.py` script, and it will launch the corresponding experiment.
+
+> **Tip**: All runnable scripts start with `run_`. You can identify them by name to know exactly which setup they refer to.
+
 ## List of hyperparameters ##
 
 
