@@ -89,7 +89,7 @@ We used computing clusters for all experiments. The specific hardware varied by 
 - **Other Libraries**: NumPy, scikit-learn, Optuna, tqdm  
   *(Full list available in `requirements.txt`)*
 
-All experiments were run using isolated environments configured via ARC’s module system.
+All experiments were run using isolated environments configured via clusters available in our unversity's module system.
 
 
 
