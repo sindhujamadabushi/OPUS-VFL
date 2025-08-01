@@ -39,6 +39,31 @@ Just run the appropriate `run_<baseline>_<attack>_<dataset>.py` script, and it w
 
 > **Tip**: All runnable scripts start with `run_`. You can identify them by name to know exactly which setup they refer to.
 
-## List of hyperparameters ##
+## Hyperparameters
+
+Each experimental setting in OPUS-VFL uses its own set of tuned hyperparameters.  
+Below are the default values used for each setting:
+
+| Setting                        | Dataset   | Top LR       | Org LR       | Batch Size |
+|-------------------------------|-----------|--------------|--------------|------------|
+| Clean Training                | CIFAR-10  | 0.0005       | 0.0005       | 512        |
+| Clean Training                | CIFAR-100 | 0.01         | 0.01         | 512        |
+| Clean Training                | MNIST     | 0.0000116    | 0.0000058    | 512        |
+| Backdoor Attack               | CIFAR-10  | 0.0005       | 0.0005       | 512        |
+| Feature Inference Attack      | CIFAR-10  | 0.0005       | 0.0005       | 512        |
+| Label Inference Attack        | CIFAR-10  | 0.0005       | 0.0005       | 512        |
+| Label Inference Attack        | MNIST     | 0.0000116    | 0.0000058    | 512        |
+ 
+> - `Top LR` = Learning rate for the server/top model  
+> - `Org LR` = Learning rate for organization/client models
+
+> **Note:**  
+> The hyperparameters listed above are **directly defined inside each `run_*.py` script** located in `baselines/opus-vfl/codes/`.  
+> For example, the hyperparameters for the backdoor attack on CIFAR-10 are set inside `run_p2vfl_backdoor_cifar10.py`.
+
+> **Other Baselines:**  
+> If you're running baselines like `vanilla`, `vfl_czofo`, `bpf`, or `sdg`, please check their corresponding `run_*.py` files in the same folder.  
+> Each baseline defines its own learning rates, batch size, and other settings **at the top of the script** — it's easy to find and modify.
+
 
 
