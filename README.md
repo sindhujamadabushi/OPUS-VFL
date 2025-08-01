@@ -59,7 +59,7 @@ Below are the default values used for each setting:
 
 > **Other Baselines:**  
 > If you're running baselines like `vanilla`, `vfl_czofo`, `bpf`, or `sdg`, please check their corresponding `run_*.py` files in the same folder.  
-> Each baseline defines its own learning rates, batch size, and other settings **at the top of the script** — it's easy to find and modify.
+> Each baseline defines its own learning rates, batch size, and other settings **at the top of the script**.
 
 ### Computing Infrastructure
 
