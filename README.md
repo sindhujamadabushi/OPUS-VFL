@@ -122,7 +122,27 @@ We used computing clusters for all experiments. The specific hardware varied by 
 - **Other Libraries**: NumPy, scikit-learn, Optuna, tqdm  
   *(Full list available in `requirements.txt`)*
 
-All experiments were run using isolated environments configured via clusters available in our organization's module system.
+All experiments were run using isolated environments configured via clusters available in our organization's module system. We have taken our base VFL code from the paper 
+
+## Acknowledgment
+
+Our OPUS-VFL implementation builds upon the original codebase developed by:
+
+- Kang Wei  
+- Jun Li  
+- Chuan Ma  
+- Ming Ding  
+- Sha Wei  
+- Fan Wu  
+- Guihai Chen  
+- Thilina Ranbaduge  
+
+Their work is described in the paper: [arXiv:2202.04309](https://arxiv.org/abs/2202.04309)  
+Original GitHub repository: [github.com/AdamWei-boop/Vertical_FL](https://github.com/AdamWei-boop/Vertical_FL)
+
+We have adapted their implementation and extended it with additional modules and experiments to support our proposed methods.
+
+
 
 
 
