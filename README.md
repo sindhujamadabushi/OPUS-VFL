@@ -61,9 +61,30 @@ Below are the default values used for each setting:
 > If you're running baselines like `vanilla`, `vfl_czofo`, `bpf`, or `sdg`, please check their corresponding `run_*.py` files in the same folder.  
 > Each baseline defines its own learning rates, batch size, and other settings **at the top of the script**.
 
+### Hyperparameter Tuning Notes
+
+We primarily used manual tuning to select hyperparameters across all settings.  
+For a few challenging cases, we used [Optuna](https://optuna.org) to guide the initial search, followed by further manual refinement.
+
+- **Manual Tuning**:
+  - Started with a learning rate of **0.01**
+  - Gradually reduced it based on model behavior 
+  - Final values were chosen when the model showed stable training and reasonable validation performance.
+
+- **Optuna-Aided Tuning** (used selectively):
+  - Search space:
+    - Top model LR: 1e-2 to 1e-6
+    - Org model LR: 1e-2 to 1e-6
+    - Batch size: {64, 128, 256, 512, 1024}
+  - Objective: Maximize validation accuracy
+  - Trials: 100 per setting
+  - Resulting values were further manually adjusted if needed
+
+All final hyperparameters are hardcoded in the corresponding `run_*.py` scripts for full reproducibility.
+
 ### Randomness and Reproducibility
 
-We used fixed random seeds **during initial tuning and development** to ensure reproducibility while selecting stable hyperparameters.  
+We used fixed random seeds during initial tuning and development while selecting stable hyperparameters.  
 Specifically, we set seeds for:
 
 - Python `random`
