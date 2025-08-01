@@ -6,6 +6,7 @@ Clone the repository and install dependencies:
 git clone https://github.com/your-username/your-repo.git
 cd your-repo
 pip install -r requirements.txt
+```
 
 ## Running the Code
 
